@@ -7,59 +7,37 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
-	"time"
 
 	"github.com/spf13/viper"
 )
 
 type config struct {
+	Database DatabaseConfig
 	Server   ServerConfig
-	Postgres PostgresConfig
 }
-
-// Postgresql config
-type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+type DatabaseConfig struct {
+	User                 string
+	Password             string
+	Net                  string
+	Addr                 string
+	DBName               string
+	AllowNativePasswords bool
+	Params               struct {
+		ParseTime string
+		Charset   string
+		Loc       string
+	}
 }
-
-// Server config struct
 type ServerConfig struct {
-	AppVersion        string
-	Port              string
-	PprofPort         string
-	Mode              string
-	JwtSecretKey      string
-	CookieName        string
-	ReadTimeout       time.Duration
-	WriteTimeout      time.Duration
-	SSL               bool
-	CtxDefaultTimeout time.Duration
-	CSRF              bool
-	Debug             bool
-	MaxConnectionIdle time.Duration
-	Timeout           time.Duration
-	MaxConnectionAge  time.Duration
-	Time              time.Duration
+	Address string
 }
 
 // C is config variable
 var C config
 
-// ReadConfigOption is a config option
-type ReadConfigOption struct {
-	AppEnv string
-}
-
 // ReadConfig configures config file
-func ReadConfig(option ReadConfigOption) {
+func ReadConfig() {
 	Config := &C
-
 	viper.AddConfigPath(filepath.Join(rootDir(), "config"))
 	viper.SetConfigName("config")
 
